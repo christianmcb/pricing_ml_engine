@@ -85,7 +85,7 @@ Clone the repository, install dependencies, train the model, and start the API:
 
 ```bash
 git clone <repo-url>
-cd pricing-ml-engine
+cd pricing_ml_engine
 pip install -r requirements.txt
 
 make train
@@ -195,6 +195,7 @@ Example request:
   "Previously_Insured": 0,
   "Vehicle_Age": "> 2 Years",
   "Vehicle_Damage": "Yes",
+  "Annual_Premium": 35000.0,
   "Policy_Sales_Channel": 26.0,
   "Vintage": 217
 }

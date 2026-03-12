@@ -24,9 +24,13 @@ def load_test_data(data_path: str) -> pd.DataFrame:
 
 
 def validate_training_dataframe(df: pd.DataFrame, target_col: str = "Response") -> None:
-    missing_features = [col for col in REQUIRED_FEATURE_COLUMNS if col not in df.columns]
+    missing_features = [
+        col for col in REQUIRED_FEATURE_COLUMNS if col not in df.columns
+    ]
     if missing_features:
-        raise ValueError(f"Training data missing required feature columns: {missing_features}")
+        raise ValueError(
+            f"Training data missing required feature columns: {missing_features}"
+        )
 
     if target_col not in df.columns:
         raise ValueError(f"Training data missing target column: {target_col}")
@@ -38,9 +42,13 @@ def validate_inference_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     if "id" in df.columns:
         df = df.drop(columns=["id"])
 
-    missing_features = [col for col in REQUIRED_FEATURE_COLUMNS if col not in df.columns]
+    missing_features = [
+        col for col in REQUIRED_FEATURE_COLUMNS if col not in df.columns
+    ]
     if missing_features:
-        raise ValueError(f"Inference data missing required feature columns: {missing_features}")
+        raise ValueError(
+            f"Inference data missing required feature columns: {missing_features}"
+        )
 
     extra_columns = [col for col in df.columns if col not in REQUIRED_FEATURE_COLUMNS]
     if extra_columns:

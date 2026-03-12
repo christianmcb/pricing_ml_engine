@@ -1,4 +1,5 @@
 import warnings
+
 warnings.filterwarnings("ignore")
 
 import json
@@ -99,31 +100,46 @@ def build_versioned_paths(base_model_path: str, run_id: str) -> dict:
 
 def build_model_pipelines(preprocessor, random_state: int):
     return {
-        "RandomForest": Pipeline([
-            ("preprocessor", preprocessor),
-            ("classifier", RandomForestClassifier(
-                random_state=random_state,
-                n_jobs=-1,
-                class_weight="balanced",
-            )),
-        ]),
-        "XGBoost": Pipeline([
-            ("preprocessor", preprocessor),
-            ("classifier", XGBClassifier(
-                random_state=random_state,
-                n_jobs=-1,
-                eval_metric="logloss",
-                verbosity=0,
-            )),
-        ]),
-        "LightGBM": Pipeline([
-            ("preprocessor", preprocessor),
-            ("classifier", LGBMClassifier(
-                random_state=random_state,
-                n_jobs=-1,
-                verbose=-1,
-            )),
-        ]),
+        "RandomForest": Pipeline(
+            [
+                ("preprocessor", preprocessor),
+                (
+                    "classifier",
+                    RandomForestClassifier(
+                        random_state=random_state,
+                        n_jobs=-1,
+                        class_weight="balanced",
+                    ),
+                ),
+            ]
+        ),
+        "XGBoost": Pipeline(
+            [
+                ("preprocessor", preprocessor),
+                (
+                    "classifier",
+                    XGBClassifier(
+                        random_state=random_state,
+                        n_jobs=-1,
+                        eval_metric="logloss",
+                        verbosity=0,
+                    ),
+                ),
+            ]
+        ),
+        "LightGBM": Pipeline(
+            [
+                ("preprocessor", preprocessor),
+                (
+                    "classifier",
+                    LGBMClassifier(
+                        random_state=random_state,
+                        n_jobs=-1,
+                        verbose=-1,
+                    ),
+                ),
+            ]
+        ),
     }
 
 
@@ -167,16 +183,20 @@ def tune_model_with_progress(
     n_iter,
     random_state,
 ):
-    sampled_params = list(ParameterSampler(
-        param_dist,
-        n_iter=n_iter,
-        random_state=random_state,
-    ))
+    sampled_params = list(
+        ParameterSampler(
+            param_dist,
+            n_iter=n_iter,
+            random_state=random_state,
+        )
+    )
 
     best_score = -np.inf
     best_params = None
 
-    logger.info("Starting tuning for %s with %d trials", model_name, len(sampled_params))
+    logger.info(
+        "Starting tuning for %s with %d trials", model_name, len(sampled_params)
+    )
     logger.info("Using models: RandomForest | XGBoost | LightGBM")
     logger.info("Hyperparameter search iterations: %d", n_iter)
 
@@ -213,10 +233,12 @@ def tune_model_with_progress(
                 best_score,
             )
 
-        progress_bar.set_postfix({
-            "best": f"{best_score:.4f}",
-            "trial": f"{mean_score:.4f}",
-        })
+        progress_bar.set_postfix(
+            {
+                "best": f"{best_score:.4f}",
+                "trial": f"{mean_score:.4f}",
+            }
+        )
 
     if best_params is None:
         raise ValueError(f"No valid hyperparameter set found for {model_name}")
@@ -358,10 +380,12 @@ def main():
         feature_names = best_model.named_steps["preprocessor"].get_feature_names_out()
         importances = best_model.named_steps["classifier"].feature_importances_
 
-        fi = pd.DataFrame({
-            "feature": feature_names,
-            "importance": importances,
-        }).sort_values("importance", ascending=False)
+        fi = pd.DataFrame(
+            {
+                "feature": feature_names,
+                "importance": importances,
+            }
+        ).sort_values("importance", ascending=False)
 
         fi.to_csv(versioned_paths["feature_importance_path"], index=False)
 
@@ -382,8 +406,11 @@ def main():
         json.dump(metadata, f, indent=2)
 
     logger.info("Training pipeline finished")
-    logger.info("Candidate model stored in registry run folder: %s", versioned_paths["run_dir"])
+    logger.info(
+        "Candidate model stored in registry run folder: %s", versioned_paths["run_dir"]
+    )
     logger.info("Promote explicitly via Makefile when ready")
+
 
 if __name__ == "__main__":
     main()

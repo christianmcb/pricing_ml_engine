@@ -1,8 +1,27 @@
 from datetime import datetime
 import json
+import argparse
+import sys
+import joblib
 from pathlib import Path
 import pandas as pd
 from sklearn.metrics import roc_auc_score, classification_report
+
+from src.config import load_config
+from src.data_processing import (
+    load_train_data,
+    split_features_target,
+    validate_training_dataframe,
+)
+
+
+MIN_TEST_AUC = 0.75
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--run_id", required=True)
+    return parser.parse_args()
 
 
 def evaluate_classifier(model, X_test, y_test) -> dict:
@@ -41,3 +60,38 @@ def log_experiment(result_row: dict, file_path="outputs/experiments.csv"):
         df.to_csv(file_path, mode="a", header=False, index=False)
     else:
         df.to_csv(file_path, index=False)
+
+
+def main():
+    args = parse_args()
+    config = load_config()
+
+    run_dir = Path("models/registry") / args.run_id
+    model_path = run_dir / "model.joblib"
+
+    if not model_path.exists():
+        print(f"Model not found: {model_path}")
+        sys.exit(1)
+
+    model = joblib.load(model_path)
+
+    df = load_train_data(config["data"]["train_path"])
+    validate_training_dataframe(df, target_col=config["data"]["target_column"])
+    X, y = split_features_target(df, target_col=config["data"]["target_column"])
+
+    results = evaluate_classifier(model, X, y)
+    test_auc = results["test_auc"]
+
+    print(f"Run: {args.run_id}")
+    print(f"Test AUC: {test_auc:.4f}")
+
+    if test_auc < MIN_TEST_AUC:
+        print(f"Rejected: AUC below threshold {MIN_TEST_AUC:.2f}")
+        sys.exit(1)
+
+    print("Accepted")
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()

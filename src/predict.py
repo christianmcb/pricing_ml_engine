@@ -7,7 +7,13 @@ from src.config import load_config
 from src.data_processing import validate_inference_dataframe
 
 
-def predict_from_csv(input_path: str, output_path: str, model_path: str, base_premium: float, demand_multiplier: float):
+def predict_from_csv(
+    input_path: str,
+    output_path: str,
+    model_path: str,
+    base_premium: float,
+    demand_multiplier: float,
+):
     model = joblib.load(model_path)
     df = pd.read_csv(input_path)
     df = validate_inference_dataframe(df)
