@@ -4,15 +4,6 @@ A production-style machine learning project demonstrating how models can be **tr
 
 The model predicts whether an existing **health insurance customer will purchase vehicle insurance** and uses this signal to generate a simple pricing recommendation.
 
-This repository demonstrates practical **ML engineering workflows**, including:
-
-- reproducible training pipelines  
-- model versioning (model registry)  
-- evaluation before deployment  
-- controlled model promotion  
-- API-based inference  
-- containerised deployment  
-
 ---
 
 # Dataset

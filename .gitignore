@@ -23,6 +23,8 @@ outputs/*.csv
 outputs/*.json
 outputs/*.log
 
+pyproject.toml
+
 .vscode/
 .idea/
 
