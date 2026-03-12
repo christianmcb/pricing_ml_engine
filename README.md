@@ -247,8 +247,6 @@ make promote RUN_ID=<RUN_ID>
 make api
 ```
 
-This demonstrates a simplified **ML training → evaluation → deployment pipeline**, similar to production ML systems.
-
 ---
 
 ## Author
