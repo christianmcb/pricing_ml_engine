@@ -37,6 +37,20 @@ The positive rate in the dataset is roughly **12%**, making this a moderately im
 
 ---
 
+## Example Results
+
+Model performance using 5-fold cross-validation on the training set and evaluation on a held-out test set.
+
+| Model | CV ROC-AUC (Train) | Test ROC-AUC | Notes |
+|------|------|------|------|
+| RandomForest | 0.8543 | 0.8544 | Strong baseline |
+| LightGBM | 0.8576 | 0.8580 | Captures nonlinear interactions |
+| XGBoost | 0.8577 | 0.8583 | Best overall performance |
+
+**Selected model for deployment:** XGBoost  
+
+---
+
 # Project Structure
 
 ```
