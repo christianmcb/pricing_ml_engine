@@ -89,7 +89,7 @@ def build_versioned_paths(base_model_path: str, run_id: str) -> dict:
     return {
         "artifact_root": artifact_root,
         "run_dir": run_dir,
-        "model_path": run_dir / f"{stem}{suffix}",
+        "model_path": run_dir / "model.joblib",
         "comparison_path": run_dir / "model_comparison.csv",
         "params_path": run_dir / "best_params.json",
         "metadata_path": run_dir / "model_metadata.json",

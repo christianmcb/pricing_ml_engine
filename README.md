@@ -1,84 +1,39 @@
 # Pricing ML Engine
 
-A production-style machine learning project demonstrating how pricing and customer response models can be trained, evaluated, versioned, and deployed into a real-time quote generation service.
+A production-style machine learning project demonstrating how models can be **trained, evaluated, versioned, and deployed via an API**.
 
-The system predicts the probability that a customer will respond to an insurance offer and converts this signal into a pricing recommendation that could be used inside a quoting or pricing engine.
-
-This repository is designed to showcase **production-oriented ML engineering practices**, including:
-
-- reproducible training pipelines
-- model versioning and artifact management
-- evaluation gates before deployment
-- controlled model promotion
-- API-based inference
-- containerised deployment
+The system predicts whether an existing **health insurance customer will purchase vehicle insurance** and uses this signal to generate a simple pricing recommendation.
 
 ---
 
-# Quick Setup (Recommended)
+# Dataset
 
-Clone the repository and install dependencies:
+This project uses the **Health Insurance Cross-Sell Prediction dataset**, which contains demographic and insurance-related information about customers with existing health insurance policies.
 
-```bash
-git clone <repo-url>
-cd pricing-ml-engine
-pip install -r requirements.txt
-```
+The objective is to predict whether a customer would be interested in purchasing **vehicle insurance**.
 
-Train the model:
+Dataset source:
 
-```bash
-make train
-```
+https://www.kaggle.com/datasets/anmolkumar/health-insurance-cross-sell-prediction
 
-List trained model runs:
+Reference:
 
-```bash
-make list-models
-```
+> Kumar, A. (2021). *Health Insurance Cross Sell Prediction Dataset*. Kaggle.
 
-Evaluate a candidate model:
-
-```bash
-make evaluate RUN_ID=<RUN_ID>
-```
-
-Promote the model to production:
-
-```bash
-make promote RUN_ID=<RUN_ID>
-```
-
-Start the API:
-
-```bash
-make api
-```
-
-API documentation will be available at:
+Target variable:
 
 ```
-http://localhost:8000/docs
+Response
 ```
 
----
+Where:
 
-# Example Full Workflow
-
-```bash
-make train
-make list-models
-make evaluate RUN_ID=<RUN_ID>
-make promote RUN_ID=<RUN_ID>
-make api
+```
+1 → Customer interested in vehicle insurance
+0 → Customer not interested
 ```
 
-Pipeline steps:
-
-1. Train candidate models
-2. Evaluate performance
-3. Promote approved model
-4. Serve model via API
+Typical positive rate in the dataset is around **12%**, making this a moderately imbalanced classification problem.
 
 ---
 
@@ -88,23 +43,7 @@ Pipeline steps:
 pricing-ml-engine/
 │
 ├── data/
-│   ├── train.csv
-│   └── test.csv
-│
-├── src/
-│   ├── config.py
-│   ├── data_processing.py
-│   ├── feature_engineering.py
-│   ├── evaluate_model.py
-│   └── logger.py
-│
-├── scripts/
-│   ├── train.py
-│   ├── predict.py
-│   └── serve_api.py
-│
-├── tests/
-│   └── test_features.py
+│   └── train.csv
 │
 ├── models/
 │   ├── registry/
@@ -119,6 +58,20 @@ pricing-ml-engine/
 │       ├── model.joblib
 │       └── model_metadata.json
 │
+├── scripts/
+│   ├── train.py
+│   ├── predict.py
+│   └── serve_api.py
+│
+├── src/
+│   ├── config.py
+│   ├── data_processing.py
+│   ├── feature_engineering.py
+│   ├── evaluate_model.py
+│   └── logger.py
+│
+├── tests/
+│
 ├── Dockerfile
 ├── Makefile
 ├── requirements.txt
@@ -127,27 +80,84 @@ pricing-ml-engine/
 
 ---
 
-# ML Pipeline Architecture
+# Quickstart
 
-This project separates **training**, **evaluation**, and **serving**.
+Clone the repository:
 
-Models are first trained and stored in a **model registry**, then evaluated and promoted to production.
+```bash
+git clone <repo-url>
+cd pricing-ml-engine
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Train a model:
+
+```bash
+make train
+```
+
+List trained runs:
+
+```bash
+make list-models
+```
+
+Evaluate a candidate model:
+
+```bash
+make evaluate RUN_ID=<RUN_ID>
+```
+
+Promote a model for production:
+
+```bash
+make promote RUN_ID=<RUN_ID>
+```
+
+Start the API:
+
+```bash
+make api
+```
+
+API documentation:
 
 ```
-Train → Evaluate → Promote → Serve
+http://localhost:8000/docs
 ```
-
-This architecture mirrors common **MLOps workflows** used in production ML systems.
 
 ---
 
-# Model Registry
+# Training Pipeline
 
-Each training run creates a timestamped model version:
+Training runs a full ML workflow:
 
+1. Load dataset
+2. Validate data schema
+3. Build preprocessing pipeline
+4. Train multiple models
+5. Tune hyperparameters
+6. Evaluate performance
+7. Save versioned artifacts
+
+Supported models:
+
+- RandomForest
+- XGBoost
+- LightGBM
+
+Training command:
+
+```bash
+make train
 ```
-models/registry/<RUN_ID>/
-```
+
+Each run generates a **timestamped run ID** and stores artifacts in the **model registry**.
 
 Example:
 
@@ -155,7 +165,7 @@ Example:
 models/registry/20260312T193312Z/
 ```
 
-Artifacts stored per run:
+Artifacts saved per run:
 
 ```
 model.joblib
@@ -167,138 +177,127 @@ feature_importance.csv
 
 This allows:
 
-- reproducible experiments
-- historical model comparison
-- safe model deployment decisions
+- experiment reproducibility
+- historical comparison of models
+- safe deployment decisions
 
 ---
 
-# Business Objective
+# Model Evaluation
 
-Insurance pricing and quote optimisation systems must balance:
+Evaluate a trained model before deployment.
 
-- customer demand
-- conversion likelihood
-- risk-based pricing
-
-This project models **customer conversion probability** and converts it into a **pricing recommendation**.
-
-Example workflow:
-
-1. Customer requests a quote
-2. Model predicts probability of conversion
-3. Pricing logic adjusts premium
-4. Recommended premium returned
-
-Applications include:
-
-- insurance quote optimisation
-- demand-based pricing
-- price sensitivity modelling
-- customer propensity modelling
-
----
-
-# Dataset
-
-The project uses a public insurance dataset containing customer and policy information.
-
-Example features:
-
-| Feature | Description |
-|------|------|
-| Gender | Customer gender |
-| Age | Customer age |
-| Driving_License | Whether the customer has a driving license |
-| Region_Code | Geographic region |
-| Previously_Insured | Whether the customer already has insurance |
-| Vehicle_Age | Age of vehicle |
-| Vehicle_Damage | Prior vehicle damage |
-| Policy_Sales_Channel | Sales channel |
-| Vintage | Days since customer association |
-
-Target variable:
-
-**Response**
-
-Indicates whether the customer accepted the insurance offer.
-
----
-
-# Training Models
-
-The training pipeline performs:
-
-1. Load dataset
-2. Build preprocessing pipeline
-3. Train multiple candidate models
-4. Tune hyperparameters
-5. Evaluate models
-6. Compare performance
-7. Save versioned artifacts
-
-Supported models:
-
-- RandomForest
-- XGBoost
-- LightGBM
-
-Run training:
+List available runs:
 
 ```bash
-make train
+make list-models
 ```
+
+Evaluate a specific run:
+
+```bash
+make evaluate RUN_ID=<RUN_ID>
+```
+
+Evaluation metrics include:
+
+- ROC AUC
+- test set performance
+- model comparison across algorithms
+
+---
+
+# Model Promotion
+
+Only evaluated models should be promoted.
+
+Promote a model to production:
+
+```bash
+make promote RUN_ID=<RUN_ID>
+```
+
+This copies the selected model to:
+
+```
+models/current/model.joblib
+```
+
+All prediction services load from this location.
 
 ---
 
 # Batch Prediction
 
-Run predictions on new CSV data:
+Generate predictions on new data:
 
 ```bash
 make predict
 ```
 
-or
+or run directly:
 
 ```bash
 python -m scripts.predict
 ```
 
-Outputs include:
+Predictions typically include:
 
-- conversion_probability
-- predicted_conversion
-- risk_loading
-- recommended_premium
+```
+conversion_probability
+predicted_conversion
+base_premium
+demand_adjustment
+recommended_premium
+```
 
 ---
 
-# Running the API
+# Pricing Logic
 
-Start the quote generation API:
+The ML model predicts the probability that a customer will purchase vehicle insurance.
+
+Example:
+
+```
+conversion_probability = 0.08
+```
+
+A simple pricing rule converts this into a premium recommendation.
+
+Example calculation:
+
+```
+base_premium = 300
+demand_adjustment = conversion_probability × price_factor
+recommended_premium = base_premium + demand_adjustment
+```
+
+This demonstrates how **machine learning outputs can feed into pricing logic**, similar to demand-based pricing systems.
+
+---
+
+# API
+
+Start the API:
 
 ```bash
 make api
 ```
 
-or
+or directly:
 
 ```bash
 uvicorn scripts.serve_api:app --reload
 ```
 
-API documentation:
+Open the interactive documentation:
 
 ```
 http://localhost:8000/docs
 ```
 
----
-
-# Example Quote Request
-
-POST `/quote`
+Example request:
 
 ```json
 {
@@ -314,19 +313,38 @@ POST `/quote`
 }
 ```
 
----
-
-# Example Quote Response
+Example response:
 
 ```json
 {
-  "conversion_probability": 0.81,
-  "predicted_conversion": 1,
-  "base_premium": 300.0,
-  "demand_adjustment": 162.46,
-  "recommended_premium": 462.46,
-  "price_segment": "high-conversion"
+  "conversion_probability": 0.08,
+  "predicted_conversion": 0,
+  "base_premium": 300,
+  "demand_adjustment": 16,
+  "recommended_premium": 316
 }
+```
+
+---
+
+# Docker Deployment
+
+Build the container:
+
+```bash
+make docker-build
+```
+
+Run the container:
+
+```bash
+make docker-run
+```
+
+The API will be available at:
+
+```
+http://localhost:8000
 ```
 
 ---
@@ -339,7 +357,7 @@ Run unit tests:
 make test
 ```
 
-or
+or:
 
 ```bash
 pytest tests/
@@ -347,55 +365,29 @@ pytest tests/
 
 ---
 
-# Docker Deployment
-
-Build container:
-
-```bash
-make docker-build
-```
-
-Run container:
-
-```bash
-make docker-run
-```
-
-API available at:
+# Typical Workflow
 
 ```
-http://localhost:8000
+make train
+make list-models
+make evaluate RUN_ID=<RUN_ID>
+make promote RUN_ID=<RUN_ID>
+make api
 ```
+
+This workflow demonstrates a simplified **ML training → evaluation → promotion → deployment pipeline**, similar to those used in production ML systems.
 
 ---
 
 # Technologies Used
 
-Python  
-Scikit-learn  
-XGBoost  
-LightGBM  
-FastAPI  
-Docker  
-Pandas  
-NumPy  
-TQDM  
-
----
-
-# Future Improvements
-
-Potential extensions:
-
-- MLflow experiment tracking
-- Feature store integration
-- Model monitoring and drift detection
-- CI/CD pipeline for automated training
-- Cloud deployment (AWS / GCP)
-- Online feature pipelines
-
----
-
-# License
-
-MIT License
+- Python
+- Scikit-learn
+- XGBoost
+- LightGBM
+- FastAPI
+- Docker
+- Pandas
+- NumPy
+- TQDM
+```

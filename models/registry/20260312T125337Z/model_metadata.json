@@ -1,0 +1,12 @@
+{
+  "run_id": "20260312T125337Z",
+  "model_name": "XGBoost",
+  "git_hash": "7263aa0a237a3a848b285d760a3fec9378bfe955",
+  "best_cv_auc": 0.8577185038349594,
+  "test_auc": 0.858269240101553,
+  "artifact_root": "models",
+  "artifact_dir": "models/registry/20260312T125337Z",
+  "model_path": "models/registry/20260312T125337Z/pricing_model.pkl",
+  "comparison_path": "models/registry/20260312T125337Z/model_comparison.csv",
+  "params_path": "models/registry/20260312T125337Z/best_params.json"
+}

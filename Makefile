@@ -4,26 +4,22 @@ MODEL_ROOT=models
 REGISTRY=$(MODEL_ROOT)/registry
 CURRENT=$(MODEL_ROOT)/current
 
+.PHONY: train predict api test docker-build docker-run list-models evaluate promote promote-latest clean-current
 
 train:
 	$(PYTHON) -m scripts.train
 
-
 predict:
 	$(PYTHON) -m scripts.predict
-
 
 api:
 	$(PYTHON) -m scripts.serve_api
 
-
 test:
 	$(PYTHON) -m pytest tests/
 
-
 docker-build:
 	docker build -t pricing-ml-engine .
-
 
 docker-run:
 	docker run -p 8000:8000 pricing-ml-engine

@@ -15,7 +15,7 @@ pricing:
   demand_multiplier: 200.0
 
 artifacts:
-  model_path: "models/pricing_model.pkl"
+  model_path: "models/current/model.joblib"
   comparison_path: "outputs/model_comparison.csv"
   params_path: "outputs/best_params.json"
   log_path: "outputs/training.log"

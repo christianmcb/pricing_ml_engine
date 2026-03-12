@@ -1,0 +1,11 @@
+{
+  "run_id": "20260312T125337Z",
+  "best_model": "XGBoost",
+  "best_params": {
+    "classifier__colsample_bytree": 0.7692681476866446,
+    "classifier__learning_rate": 0.04687178262182082,
+    "classifier__max_depth": 6,
+    "classifier__n_estimators": 398,
+    "classifier__subsample": 0.8829989973347863
+  }
+}
