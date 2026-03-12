@@ -2,7 +2,16 @@
 
 A production-style machine learning project demonstrating how models can be **trained, evaluated, versioned, and deployed via an API**.
 
-The system predicts whether an existing **health insurance customer will purchase vehicle insurance** and uses this signal to generate a simple pricing recommendation.
+The model predicts whether an existing **health insurance customer will purchase vehicle insurance** and uses this signal to generate a simple pricing recommendation.
+
+This repository demonstrates practical **ML engineering workflows**, including:
+
+- reproducible training pipelines  
+- model versioning (model registry)  
+- evaluation before deployment  
+- controlled model promotion  
+- API-based inference  
+- containerised deployment  
 
 ---
 
@@ -29,11 +38,11 @@ Response
 Where:
 
 ```
-1 → Customer interested in vehicle insurance
-0 → Customer not interested
+1 → Customer interested in vehicle insurance  
+0 → Customer not interested  
 ```
 
-Typical positive rate in the dataset is around **12%**, making this a moderately imbalanced classification problem.
+The positive rate in the dataset is roughly **12%**, making this a moderately imbalanced classification task.
 
 ---
 
@@ -71,7 +80,6 @@ pricing-ml-engine/
 │   └── logger.py
 │
 ├── tests/
-│
 ├── Dockerfile
 ├── Makefile
 ├── requirements.txt
@@ -82,46 +90,18 @@ pricing-ml-engine/
 
 # Quickstart
 
-Clone the repository:
+Clone the repository, install dependencies, train the model, and start the API:
 
 ```bash
 git clone <repo-url>
 cd pricing-ml-engine
-```
-
-Install dependencies:
-
-```bash
 pip install -r requirements.txt
-```
 
-Train a model:
-
-```bash
 make train
-```
-
-List trained runs:
-
-```bash
 make list-models
-```
-
-Evaluate a candidate model:
-
-```bash
 make evaluate RUN_ID=<RUN_ID>
-```
-
-Promote a model for production:
-
-```bash
 make promote RUN_ID=<RUN_ID>
-```
 
-Start the API:
-
-```bash
 make api
 ```
 
@@ -137,27 +117,25 @@ http://localhost:8000/docs
 
 Training runs a full ML workflow:
 
-1. Load dataset
-2. Validate data schema
-3. Build preprocessing pipeline
-4. Train multiple models
-5. Tune hyperparameters
-6. Evaluate performance
-7. Save versioned artifacts
+1. Load dataset  
+2. Validate input schema  
+3. Build preprocessing pipeline  
+4. Train multiple candidate models  
+5. Tune hyperparameters  
+6. Evaluate performance  
+7. Save versioned artifacts  
 
 Supported models:
 
-- RandomForest
-- XGBoost
-- LightGBM
+- RandomForest  
+- XGBoost  
+- LightGBM  
 
-Training command:
+Each training run produces a **timestamped model version** stored in:
 
-```bash
-make train
 ```
-
-Each run generates a **timestamped run ID** and stores artifacts in the **model registry**.
+models/registry/<RUN_ID>/
+```
 
 Example:
 
@@ -175,49 +153,23 @@ best_params.json
 feature_importance.csv
 ```
 
-This allows:
-
-- experiment reproducibility
-- historical comparison of models
-- safe deployment decisions
+This allows experiment reproducibility and safe deployment decisions.
 
 ---
 
-# Model Evaluation
+# Model Evaluation & Promotion
 
-Evaluate a trained model before deployment.
+Models are evaluated before deployment and promoted manually.
 
-List available runs:
+Example workflow:
 
 ```bash
 make list-models
-```
-
-Evaluate a specific run:
-
-```bash
 make evaluate RUN_ID=<RUN_ID>
-```
-
-Evaluation metrics include:
-
-- ROC AUC
-- test set performance
-- model comparison across algorithms
-
----
-
-# Model Promotion
-
-Only evaluated models should be promoted.
-
-Promote a model to production:
-
-```bash
 make promote RUN_ID=<RUN_ID>
 ```
 
-This copies the selected model to:
+The promoted model becomes the **active production model**:
 
 ```
 models/current/model.joblib
@@ -227,71 +179,15 @@ All prediction services load from this location.
 
 ---
 
-# Batch Prediction
-
-Generate predictions on new data:
-
-```bash
-make predict
-```
-
-or run directly:
-
-```bash
-python -m scripts.predict
-```
-
-Predictions typically include:
-
-```
-conversion_probability
-predicted_conversion
-base_premium
-demand_adjustment
-recommended_premium
-```
-
----
-
-# Pricing Logic
-
-The ML model predicts the probability that a customer will purchase vehicle insurance.
-
-Example:
-
-```
-conversion_probability = 0.08
-```
-
-A simple pricing rule converts this into a premium recommendation.
-
-Example calculation:
-
-```
-base_premium = 300
-demand_adjustment = conversion_probability × price_factor
-recommended_premium = base_premium + demand_adjustment
-```
-
-This demonstrates how **machine learning outputs can feed into pricing logic**, similar to demand-based pricing systems.
-
----
-
 # API
 
-Start the API:
+Start the FastAPI inference service:
 
 ```bash
 make api
 ```
 
-or directly:
-
-```bash
-uvicorn scripts.serve_api:app --reload
-```
-
-Open the interactive documentation:
+Interactive API documentation:
 
 ```
 http://localhost:8000/docs
@@ -327,17 +223,12 @@ Example response:
 
 ---
 
-# Docker Deployment
+# Docker
 
-Build the container:
+Build and run the API inside a container:
 
 ```bash
 make docker-build
-```
-
-Run the container:
-
-```bash
 make docker-run
 ```
 
@@ -349,25 +240,15 @@ http://localhost:8000
 
 ---
 
-# Testing
-
-Run unit tests:
-
-```bash
-make test
-```
-
-or:
-
-```bash
-pytest tests/
-```
-
----
-
 # Typical Workflow
 
 ```
+train → evaluate → promote → serve
+```
+
+Commands:
+
+```bash
 make train
 make list-models
 make evaluate RUN_ID=<RUN_ID>
@@ -375,19 +256,18 @@ make promote RUN_ID=<RUN_ID>
 make api
 ```
 
-This workflow demonstrates a simplified **ML training → evaluation → promotion → deployment pipeline**, similar to those used in production ML systems.
+This demonstrates a simplified **ML training → evaluation → deployment pipeline**, similar to production ML systems.
 
 ---
 
 # Technologies Used
 
-- Python
-- Scikit-learn
-- XGBoost
-- LightGBM
-- FastAPI
-- Docker
-- Pandas
-- NumPy
-- TQDM
-```
+- Python  
+- Scikit-learn  
+- XGBoost  
+- LightGBM  
+- FastAPI  
+- Docker  
+- Pandas  
+- NumPy  
+- TQDM  
