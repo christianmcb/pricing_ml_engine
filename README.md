@@ -254,7 +254,7 @@ make api
 Christian McBride  
 Manchester, UK  
 
-GitHub: https://github.com/christianmcb
+GitHub: https://github.com/christianmcb  
 LinkedIn: https://linkedin.com/in/christianmcb8
 
 ---
