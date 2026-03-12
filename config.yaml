@@ -1,0 +1,22 @@
+data:
+  train_path: "data/train.csv"
+  test_path: "data/test.csv"
+  target_column: "Response"
+  test_size: 0.2
+  random_state: 42
+
+training:
+  cv_folds: 3
+  n_iter: 10
+  scoring: "roc_auc"
+
+pricing:
+  base_premium: 300.0
+  demand_multiplier: 200.0
+
+artifacts:
+  model_path: "models/pricing_model.pkl"
+  comparison_path: "outputs/model_comparison.csv"
+  params_path: "outputs/best_params.json"
+  log_path: "outputs/training.log"
+  predictions_path: "outputs/predictions.csv"
