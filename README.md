@@ -227,7 +227,7 @@ make docker-run
 The API will be available at:
 
 ```
-http://localhost:8000
+http://localhost:8000/docs
 ```
 
 ---
