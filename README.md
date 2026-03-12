@@ -251,14 +251,16 @@ This demonstrates a simplified **ML training → evaluation → deployment pipel
 
 ---
 
-# Technologies Used
+## Author
 
-- Python  
-- Scikit-learn  
-- XGBoost  
-- LightGBM  
-- FastAPI  
-- Docker  
-- Pandas  
-- NumPy  
-- TQDM  
+Christian McBride  
+Manchester, UK  
+
+GitHub: https://github.com/christianmcb
+LinkedIn: https://linkedin.com/in/christianmcb8
+
+---
+
+## License
+
+This project is licensed under the MIT License.
