@@ -6,6 +6,16 @@ The model predicts whether an existing **health insurance customer will purchase
 
 ---
 
+## 🚀 Live API Demo
+
+The trained model is deployed as a **FastAPI inference service** and can be queried directly.
+
+Interactive API documentation:
+
+https://pricingmlengine-production.up.railway.app/docs
+
+---
+
 # Dataset
 
 This project uses the **Health Insurance Cross-Sell Prediction dataset**, which contains demographic and insurance-related information about customers with existing health insurance policies.
@@ -36,15 +46,6 @@ Where:
 The positive rate in the dataset is roughly **12%**, making this a moderately imbalanced classification task.
 
 ---
-
-## 🚀 Live API Demo
-
-The trained model is deployed as a **FastAPI inference service** and can be queried directly.
-
-Interactive API documentation:
-
-https://pricingmlengine-production.up.railway.app/docs
-
 
 ## Example Results
 
