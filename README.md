@@ -6,7 +6,7 @@ The model predicts whether an existing **health insurance customer will purchase
 
 ---
 
-## 🚀 Live API Demo
+## Live API Demo
 
 The trained model is deployed as a **FastAPI inference service** and can be queried directly.
 
