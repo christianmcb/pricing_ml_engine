@@ -107,7 +107,7 @@ pricing-ml-engine/
 
 # Quickstart
 
-Clone the repository, install dependencies, train the model, and start the API:
+Clone the repository, install dependencies, train the model (ensure dataset downloaded and stored in data directory), and start the API:
 
 ```bash
 git clone <repo-url>
