@@ -37,6 +37,35 @@ The positive rate in the dataset is roughly **12%**, making this a moderately im
 
 ---
 
+## 🚀 Live API Demo
+
+The trained model is deployed as a **FastAPI inference service** and can be queried directly.
+
+Interactive API documentation:
+
+https://pricingmlengine-production.up.railway.app/docs/
+
+
+### Example Request
+
+```bash
+curl -X POST "https://pricingmlengine-production.up.railway.app/docs/" \
+-H "Content-Type: application/json" \
+-d '{
+  "Gender": "Male",
+  "Age": 44,
+  "Driving_License": 1,
+  "Region_Code": 28.0,
+  "Previously_Insured": 0,
+  "Vehicle_Age": "> 2 Years",
+  "Vehicle_Damage": "Yes",
+  "Annual_Premium": 35000.0,
+  "Policy_Sales_Channel": 26.0,
+  "Vintage": 217
+}'
+
+---
+
 ## Example Results
 
 Model performance using 5-fold cross-validation on the training set and evaluation on a held-out test set.
