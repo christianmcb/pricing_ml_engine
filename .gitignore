@@ -16,6 +16,8 @@ env/
 
 *.log
 
+data/*.csv
+
 models/*.pkl
 models/*.joblib
 
