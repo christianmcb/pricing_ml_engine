@@ -24,7 +24,9 @@ The objective is to predict whether a customer would be interested in purchasing
 
 Dataset source:
 
-https://www.kaggle.com/datasets/anmolkumar/health-insurance-cross-sell-prediction
+https://www.kaggle.com/datasets/anmolkumar/health-insurance-cross-sell-prediction  
+
+Download the dataset and store it in a directory named 'data'.
 
 Reference:
 
