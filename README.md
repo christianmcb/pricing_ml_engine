@@ -43,7 +43,7 @@ The trained model is deployed as a **FastAPI inference service** and can be quer
 
 Interactive API documentation:
 
-https://YOUR-RAILWAY-URL/docs
+https://pricingmlengine-production.up.railway.app/docs
 
 
 ## Example Results
