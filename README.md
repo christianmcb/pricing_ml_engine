@@ -6,6 +6,54 @@ The model predicts whether an existing **health insurance customer will purchase
 
 ---
 
+## Core Components
+
+- **Data Processing Pipeline**
+  - Structured data loading, cleaning, and validation
+  - Feature engineering and transformation logic
+
+- **Model Training & Evaluation**
+  - Multiple model comparison (e.g. XGBoost, LightGBM)
+  - Cross-validation and performance tracking
+  - Reproducible training workflows
+
+- **Experimentation**
+  - Parameter tuning and model iteration
+  - Clear separation of training vs evaluation logic
+
+- **API Deployment**
+  - FastAPI service for real-time predictions
+  - Dockerised for consistent deployment
+
+- **Project Structure**
+  - Modular, production-style codebase
+  - Separation of concerns (data / models / serving)
+
+---
+
+## Current Limitations
+
+- No formal **model versioning / registry**
+- Limited **experiment tracking** (no MLflow integration)
+- No automated **CI/CD pipeline**
+- Minimal **data validation / monitoring in production**
+- No **feature store or reusable feature pipeline**
+- Logging and observability are basic
+
+---
+
+## Next Steps
+
+- Add lightweight **model versioning**
+- Integrate **experiment tracking**
+- Implement **data validation checks** (e.g. schema + drift detection)
+- Add **CI/CD pipeline** for training + deployment
+- Introduce **batch + real-time inference pipelines**
+- Improve **monitoring & logging** (model + API performance)
+- Optional: deploy to **AWS/GCP (S3 + ECS / Cloud Run)**
+
+---
+
 ## Live API Demo
 
 The trained model is deployed as a **FastAPI inference service** and can be queried directly.
@@ -110,7 +158,7 @@ pricing-ml-engine/
 Clone the repository, install dependencies, train the model (ensure dataset downloaded and stored in data directory), and start the API:
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/christianmcb/pricing_ml_engine.git
 cd pricing_ml_engine
 pip install -r requirements.txt
 
