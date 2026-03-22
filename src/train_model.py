@@ -4,8 +4,6 @@ warnings.filterwarnings("ignore")
 
 import json
 import subprocess
-from datetime import datetime, timezone
-from pathlib import Path
 
 import joblib
 import numpy as np
@@ -36,8 +34,11 @@ from src.evaluate_model import (
     save_json,
     save_results_csv,
 )
-from src.feature_engineering import build_preprocessor
+from src.feature_engineering import (
+    build_preprocessor,
+)
 from src.logger import get_logger
+from src.model_registry import build_versioned_paths, make_run_id
 
 
 def get_git_hash() -> str:
@@ -50,55 +51,8 @@ def get_git_hash() -> str:
         return "unknown"
 
 
-def make_run_id() -> str:
-    """Create a UTC timestamp-based run id."""
-    return datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-
-
-def resolve_artifact_root(base_model_path: str) -> Path:
-    """
-    Resolve the model artifact root directory.
-
-    Examples:
-    - models/model.joblib         -> models
-    - models/current/model.joblib -> models
-    - outputs/models/model.joblib -> outputs/models
-    """
-    base_path = Path(base_model_path)
-    parent = base_path.parent
-
-    if parent.name == "current":
-        return parent.parent
-
-    return parent
-
-
-def build_versioned_paths(base_model_path: str, run_id: str) -> dict:
-    """
-    Build run-specific artifact paths under:
-    <artifact_root>/registry/<run_id>/
-    """
-    base_path = Path(base_model_path)
-    artifact_root = resolve_artifact_root(base_model_path)
-
-    stem = base_path.stem
-    suffix = base_path.suffix or ".joblib"
-
-    run_dir = artifact_root / "registry" / run_id
-    run_dir.mkdir(parents=True, exist_ok=True)
-
-    return {
-        "artifact_root": artifact_root,
-        "run_dir": run_dir,
-        "model_path": run_dir / "model.joblib",
-        "comparison_path": run_dir / "model_comparison.csv",
-        "params_path": run_dir / "best_params.json",
-        "metadata_path": run_dir / "model_metadata.json",
-        "feature_importance_path": run_dir / "feature_importance.csv",
-    }
-
-
 def build_model_pipelines(preprocessor, random_state: int):
+    """Returns a dict of named sklearn Pipelines (RandomForest, XGBoost, LightGBM)."""
     return {
         "RandomForest": Pipeline(
             [
@@ -183,6 +137,7 @@ def tune_model_with_progress(
     n_iter,
     random_state,
 ):
+    """Runs random hyperparameter search for one model, refits the best, and returns results."""
     sampled_params = list(
         ParameterSampler(
             param_dist,
@@ -266,6 +221,7 @@ def tune_model_with_progress(
 
 
 def main():
+    """Trains and tunes all candidate models, then saves the best to the versioned registry."""
     config = load_config()
     logger = get_logger(__name__, config["artifacts"]["log_path"])
 
@@ -303,6 +259,7 @@ def main():
     )
 
     preprocessor = build_preprocessor()
+
     pipelines = build_model_pipelines(preprocessor, random_state=random_state)
     param_distributions = get_param_distributions()
 

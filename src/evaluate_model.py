@@ -25,6 +25,7 @@ def parse_args():
 
 
 def evaluate_classifier(model, X_test, y_test) -> dict:
+    """Returns ROC AUC and classification report for a trained model on the test set."""
     conversion_probability = model.predict_proba(X_test)[:, 1]
     predicted_conversion = model.predict(X_test)
 
@@ -50,6 +51,7 @@ def save_json(data: dict, output_path: str) -> None:
 
 
 def log_experiment(result_row: dict, file_path="outputs/experiments.csv"):
+    """Appends a timestamped experiment result row to the experiments CSV log."""
     Path(file_path).parent.mkdir(parents=True, exist_ok=True)
 
     result_row["timestamp"] = datetime.utcnow().isoformat()
@@ -63,6 +65,7 @@ def log_experiment(result_row: dict, file_path="outputs/experiments.csv"):
 
 
 def main():
+    """Loads a registry model by run ID and exits non-zero if AUC is below the acceptance threshold."""
     args = parse_args()
     config = load_config()
 

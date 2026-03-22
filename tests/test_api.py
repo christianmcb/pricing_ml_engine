@@ -25,3 +25,12 @@ def test_quote_endpoint_returns_prediction():
     assert "conversion_probability" in body
     assert "predicted_conversion" in body
     assert "recommended_premium" in body
+
+
+def test_model_info_endpoint_returns_model_path():
+    response = client.get("/model-info")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert "model_path" in body
+    assert "metadata" in body

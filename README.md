@@ -44,7 +44,7 @@ The model predicts whether an existing **health insurance customer will purchase
 
 ## Next Steps
 
-- Add lightweight **model versioning**
+- ~~Add lightweight **model versioning**~~ ✓
 - Integrate **experiment tracking**
 - Implement **data validation checks** (e.g. schema + drift detection)
 - Add **CI/CD pipeline** for training + deployment

@@ -24,6 +24,7 @@ def load_test_data(data_path: str) -> pd.DataFrame:
 
 
 def validate_training_dataframe(df: pd.DataFrame, target_col: str = "Response") -> None:
+    """Raises ValueError if any required feature or target columns are missing."""
     missing_features = [
         col for col in REQUIRED_FEATURE_COLUMNS if col not in df.columns
     ]
@@ -37,6 +38,7 @@ def validate_training_dataframe(df: pd.DataFrame, target_col: str = "Response") 
 
 
 def validate_inference_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    """Validates an inference DataFrame and returns only the required feature columns in order."""
     df = df.copy()
 
     if "id" in df.columns:

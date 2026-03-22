@@ -5,6 +5,7 @@ import pandas as pd
 
 from src.config import load_config
 from src.data_processing import validate_inference_dataframe
+from src.model_registry import get_model_path
 
 
 def predict_from_csv(
@@ -14,6 +15,7 @@ def predict_from_csv(
     base_premium: float,
     demand_multiplier: float,
 ):
+    """Runs batch inference on an input CSV and writes predictions with recommended premiums to output."""
     model = joblib.load(model_path)
     df = pd.read_csv(input_path)
     df = validate_inference_dataframe(df)
@@ -44,12 +46,19 @@ def main():
     parser.add_argument("--input", default=config["data"]["test_path"])
     parser.add_argument("--output", default=config["artifacts"]["predictions_path"])
     parser.add_argument("--model", default=config["artifacts"]["model_path"])
+    parser.add_argument(
+        "--run-id",
+        default=None,
+        help="Optional registry run id to score with (uses promoted current model by default).",
+    )
     args = parser.parse_args()
+
+    model_path = get_model_path(args.model, run_id=args.run_id)
 
     predict_from_csv(
         input_path=args.input,
         output_path=args.output,
-        model_path=args.model,
+        model_path=str(model_path),
         base_premium=config["pricing"]["base_premium"],
         demand_multiplier=config["pricing"]["demand_multiplier"],
     )

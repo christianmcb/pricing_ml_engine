@@ -1,35 +1,46 @@
-*.ipynb
-.ipynb_checkpoints/
-
+# OS / editor
 .DS_Store
 .AppleDouble
 .LSOverride
 ._*
+.vscode/
+.idea/
 
+# Python cache / env
 __pycache__/
 *.py[cod]
 *$py.class
-
+.pytest_cache/
+.ruff_cache/
 venv/
 env/
 .venv/
 
+# Notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+# Local env / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
 *.log
 
-data/*.csv
+# Data artifacts
+data/live/
+data/train.csv
+data/test.csv
 
-models/*.pkl
-models/*.joblib
+# Model artifacts (keep lightweight metadata in models/current)
+models/current/model.joblib
+models/current/pricing_model.pkl
+models/registry/
 
-outputs/*.csv
-outputs/*.json
-outputs/*.log
+# Runtime / monitoring outputs
+outputs/
 
-pyproject.toml
-
-.vscode/
-.idea/
-
-.*
-!.gitignore
-!.env.example
+# Optional local docs/work files
+learn.ipynb
+JOB.md

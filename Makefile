@@ -4,7 +4,7 @@ MODEL_ROOT=models
 REGISTRY=$(MODEL_ROOT)/registry
 CURRENT=$(MODEL_ROOT)/current
 
-.PHONY: train predict api test docker-build docker-run list-models evaluate promote promote-latest clean-current
+.PHONY: train predict api test docker-build docker-run list-models evaluate promote promote-latest clean-current simulate live-infer monitor retrain
 
 train:
 	$(PYTHON) -m scripts.train
@@ -66,3 +66,21 @@ promote-latest:
 
 clean-current:
 	rm -rf $(CURRENT)
+
+
+simulate:
+	$(PYTHON) -m scripts.simulate_live_data
+	@echo '{"processed_batches": []}' > outputs/live_inference_state.json
+	@echo "Live inference state reset."
+
+
+live-infer:
+	$(PYTHON) -m scripts.run_live_inference
+
+
+monitor:
+	$(PYTHON) -m scripts.monitor
+
+
+retrain:
+	$(PYTHON) -m scripts.retrain_if_needed
