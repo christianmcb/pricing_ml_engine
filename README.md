@@ -29,9 +29,9 @@ The model predicts whether an existing **health insurance customer will purchase
   - Modular, production-style codebase
   - Separation of concerns (data / models / serving)
 
----
+<!-- --- -->
 
-## Current Limitations
+<!-- ## Current Limitations
 
 - No formal **model versioning / registry**
 - Limited **experiment tracking** (no MLflow integration)
@@ -50,7 +50,7 @@ The model predicts whether an existing **health insurance customer will purchase
 - Add **CI/CD pipeline** for training + deployment
 - Introduce **batch + real-time inference pipelines**
 - Improve **monitoring & logging** (model + API performance)
-- Optional: deploy to **AWS/GCP (S3 + ECS / Cloud Run)**
+- Optional: deploy to **AWS/GCP (S3 + ECS / Cloud Run)** -->
 
 ---
 
