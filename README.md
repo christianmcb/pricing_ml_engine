@@ -92,7 +92,7 @@ make promote RUN_ID=<run_id>
 make api
 ```
 
-Deeploi dashboard: http://localhost:8000/
+Deeploi dashboard: http://localhost:8000/  
 https://github.com/christianmcb/deeploi
 
 ## End-to-End Workflow
