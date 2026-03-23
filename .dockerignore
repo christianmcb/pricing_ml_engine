@@ -1,0 +1,39 @@
+# Development artifacts
+.git/
+.gitignore
+.venv/
+venv/
+env/
+.env
+.env.*
+.vscode/
+.idea/
+
+# Notebooks and local docs
+*.ipynb
+.ipynb_checkpoints/
+JOB.md
+learn.ipynb
+
+# Test suite
+tests/
+.pytest_cache/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Historical registry runs (only models/current is needed at runtime)
+models/registry/
+
+# Training data (not needed at runtime)
+data/train.csv
+data/test.csv
+data/live/
+
+# Monitoring / inference outputs
+outputs/
+
+# Local logs
+*.log
