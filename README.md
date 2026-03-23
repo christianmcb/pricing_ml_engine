@@ -1,264 +1,118 @@
 # Pricing ML Engine
 
-A production-style machine learning project demonstrating how models can be **trained, evaluated, versioned, and deployed via an API**.
+Real-world ML portfolio project focused on one question:
 
-The model predicts whether an existing **health insurance customer will purchase vehicle insurance** and uses this signal to generate a simple pricing recommendation.
+How do you turn a classification model into a pricing workflow that can be trained, promoted, served, monitored, and retrained without manual chaos?
 
----
+This project predicts whether a health insurance customer is likely to buy vehicle insurance, then uses that probability to recommend a premium.
 
-## Core Components
+## The Business Problem
 
-- **Data Processing Pipeline**
-  - Structured data loading, cleaning, and validation
-  - Feature engineering and transformation logic
+Insurance teams have limited outbound budget and need to decide:
 
-- **Model Training & Evaluation**
-  - Multiple model comparison (e.g. XGBoost, LightGBM)
-  - Cross-validation and performance tracking
-  - Reproducible training workflows
+- Which customers are worth targeting for cross-sell.
+- How much premium to quote without leaving money on the table.
+- When the model can no longer be trusted because live data has drifted.
 
-- **Experimentation**
-  - Parameter tuning and model iteration
-  - Clear separation of training vs evaluation logic
+This repo implements the complete loop, not just notebook experimentation.
 
-- **API Deployment**
-  - FastAPI service for real-time predictions
-  - Dockerised for consistent deployment
+## What I Built
 
-- **Project Structure**
-  - Modular, production-style codebase
-  - Separation of concerns (data / models / serving)
+- Data validation and preprocessing for tabular data (numeric + categorical).
+- Model training pipeline with three candidates: RandomForest, XGBoost, LightGBM.
+- Hyperparameter search with stratified CV and ROC-AUC selection.
+- Model registry with timestamped runs and explicit promotion to production.
+- FastAPI service for real-time scoring and premium recommendation.
+- Batch live inference simulation, drift monitoring, and retrain decision logic.
+- Automated tests for API, features, model loading, and registry behavior.
 
-<!-- --- -->
+## Why These Choices
 
-<!-- ## Current Limitations
+- ROC-AUC is the primary metric because the target is imbalanced (about 12% positive).
+- Tree ensembles handle nonlinear interactions in tabular data with minimal feature hand-crafting.
+- Stratified folds avoid unstable validation caused by class imbalance.
+- Promotion is manual by design to keep deployment decisions auditable.
+- PSI-based monitoring provides an interpretable drift signal for operations.
 
-- No formal **model versioning / registry**
-- Limited **experiment tracking** (no MLflow integration)
-- No automated **CI/CD pipeline**
-- Minimal **data validation / monitoring in production**
-- No **feature store or reusable feature pipeline**
-- Logging and observability are basic
+## Current Results (From Latest Production Run)
 
----
+Run ID: 20260320T123908Z
 
-## Next Steps
+| Model | Best CV ROC-AUC | Test ROC-AUC |
+|---|---:|---:|
+| RandomForest | 0.8543 | 0.8544 |
+| LightGBM | 0.8576 | 0.8580 |
+| XGBoost (promoted) | 0.8577 | 0.8583 |
 
-- ~~Add lightweight **model versioning**~~ ✓
-- Integrate **experiment tracking**
-- Implement **data validation checks** (e.g. schema + drift detection)
-- Add **CI/CD pipeline** for training + deployment
-- Introduce **batch + real-time inference pipelines**
-- Improve **monitoring & logging** (model + API performance)
-- Optional: deploy to **AWS/GCP (S3 + ECS / Cloud Run)** -->
+Latest monitoring snapshot shows drift detection is working in practice:
 
----
+- max feature PSI: 0.6802 (threshold: 0.2)
+- retrain decision: triggered (dry-run mode)
 
-## Live API Demo
+## Repository Layout
 
-The trained model is deployed as a **FastAPI inference service** and can be queried directly.
-
-Interactive API documentation:
-
-https://pricingmlengine-production.up.railway.app/docs
-
----
-
-# Dataset
-
-This project uses the **Health Insurance Cross-Sell Prediction dataset**, which contains demographic and insurance-related information about customers with existing health insurance policies.
-
-The objective is to predict whether a customer would be interested in purchasing **vehicle insurance**.
-
-Dataset source:
-
-https://www.kaggle.com/datasets/anmolkumar/health-insurance-cross-sell-prediction  
-
-Download the dataset and store it in a directory named 'data'.
-
-Reference:
-
-> Kumar, A. (2021). *Health Insurance Cross Sell Prediction Dataset*. Kaggle.
-
-Target variable:
-
-```
-Response
+```text
+pricing_ml_engine/
+├── api/                # FastAPI app
+├── data/               # train/test and simulated live batches
+├── models/             # registry and current promoted model
+├── outputs/            # predictions, monitoring, retrain decisions
+├── scripts/            # train, serve, monitor, retrain orchestration
+├── src/                # core ML modules
+├── tests/              # pytest suite
+├── Makefile            # one-command workflows
+└── config.yaml
 ```
 
-Where:
+## Quick Start
 
-```
-1 → Customer interested in vehicle insurance  
-0 → Customer not interested  
-```
-
-The positive rate in the dataset is roughly **12%**, making this a moderately imbalanced classification task.
-
----
-
-## Example Results
-
-Model performance using 5-fold cross-validation on the training set and evaluation on a held-out test set.
-
-| Model | CV ROC-AUC (Train) | Test ROC-AUC | Notes |
-|------|------|------|------|
-| RandomForest | 0.8543 | 0.8544 | Strong baseline |
-| LightGBM | 0.8576 | 0.8580 | Captures nonlinear interactions |
-| XGBoost | 0.8577 | 0.8583 | Best overall performance |
-
-**Selected model for deployment:** XGBoost  
-
----
-
-# Project Structure
-
-```
-pricing-ml-engine/
-│
-├── data/
-│   └── train.csv
-│
-├── models/
-│   ├── registry/
-│   │   └── <RUN_ID>/
-│   │       ├── model.joblib
-│   │       ├── model_metadata.json
-│   │       ├── model_comparison.csv
-│   │       ├── best_params.json
-│   │       └── feature_importance.csv
-│   │
-│   └── current/
-│       ├── model.joblib
-│       └── model_metadata.json
-│
-├── scripts/
-│   ├── train.py
-│   ├── predict.py
-│   └── serve_api.py
-│
-├── src/
-│   ├── config.py
-│   ├── data_processing.py
-│   ├── feature_engineering.py
-│   ├── evaluate_model.py
-│   └── logger.py
-│
-├── tests/
-├── Dockerfile
-├── Makefile
-├── requirements.txt
-└── README.md
-```
-
----
-
-# Quickstart
-
-Clone the repository, install dependencies, train the model (ensure dataset downloaded and stored in data directory), and start the API:
+1. Install dependencies
 
 ```bash
-git clone https://github.com/christianmcb/pricing_ml_engine.git
-cd pricing_ml_engine
 pip install -r requirements.txt
+```
 
+2. Train candidates and register a run
+
+```bash
 make train
 make list-models
-make evaluate RUN_ID=<RUN_ID>
-make promote RUN_ID=<RUN_ID>
-
-make api
 ```
 
-API documentation:
-
-```
-http://localhost:8000/docs
-```
-
----
-
-# Training Pipeline
-
-Training runs a full ML workflow:
-
-1. Load dataset  
-2. Validate input schema  
-3. Build preprocessing pipeline  
-4. Train multiple candidate models  
-5. Tune hyperparameters  
-6. Evaluate performance  
-7. Save versioned artifacts  
-
-Supported models:
-
-- RandomForest  
-- XGBoost  
-- LightGBM  
-
-Each training run produces a **timestamped model version** stored in:
-
-```
-models/registry/<RUN_ID>/
-```
-
-Example:
-
-```
-models/registry/20260312T193312Z/
-```
-
-Artifacts saved per run:
-
-```
-model.joblib
-model_metadata.json
-model_comparison.csv
-best_params.json
-feature_importance.csv
-```
-
-This allows experiment reproducibility and safe deployment decisions.
-
----
-
-# Model Evaluation & Promotion
-
-Models are evaluated before deployment and promoted manually.
-
-Example workflow:
+3. Evaluate and promote a specific run
 
 ```bash
-make list-models
-make evaluate RUN_ID=<RUN_ID>
-make promote RUN_ID=<RUN_ID>
+make evaluate RUN_ID=<run_id>
+make promote RUN_ID=<run_id>
 ```
 
-The promoted model becomes the **active production model**:
-
-```
-models/current/model.joblib
-```
-
-All prediction services load from this location.
-
----
-
-# API
-
-Start the FastAPI inference service:
+4. Start the API
 
 ```bash
 make api
 ```
 
-Interactive API documentation:
+Deeploi dashboard: http://localhost:8000/
+https://github.com/christianmcb/deeploi
 
-```
-http://localhost:8000/docs
+## End-to-End Workflow
+
+```bash
+make simulate      # generate live batches
+make live-infer    # score unprocessed batches
+make monitor       # compute drift + performance summary
+make retrain       # evaluate retrain triggers (dry-run)
 ```
 
-Example request:
+To execute retraining automatically when triggered:
+
+```bash
+python -m scripts.retrain_if_needed --execute
+```
+
+## API Example
+
+Request:
 
 ```json
 {
@@ -275,65 +129,47 @@ Example request:
 }
 ```
 
-Example response:
+Response:
 
 ```json
 {
   "conversion_probability": 0.08,
   "predicted_conversion": 0,
+  "price_segment": "low-conversion",
   "base_premium": 300,
   "demand_adjustment": 16,
   "recommended_premium": 316
 }
 ```
 
----
-
-# Docker
-
-Build and run the API inside a container:
+## Tests
 
 ```bash
-make docker-build
-make docker-run
+make test
 ```
 
-The API will be available at:
+Coverage focus:
 
-```
-http://localhost:8000/docs
-```
+- input schema and feature pipeline behavior
+- model loading and prediction validity
+- API health and quote endpoint behavior
+- registry and promotion flow
 
----
+## What I Would Improve Next
 
-# Typical Workflow
-
-```
-train → evaluate → promote → serve
-```
-
-Commands:
-
-```bash
-make train
-make list-models
-make evaluate RUN_ID=<RUN_ID>
-make promote RUN_ID=<RUN_ID>
-make api
-```
-
----
+- Add calibration checks (and optional calibrated probabilities) before pricing.
+- Add CI pipeline to run tests and quality gates on every push.
+- Add richer observability (request latency, model version tags, alerting hooks).
+- Add temporal validation strategy if timestamped customer history becomes available.
 
 ## Author
 
 Christian McBride  
-Manchester, UK  
+Manchester, UK
 
 GitHub: https://github.com/christianmcb  
 LinkedIn: https://linkedin.com/in/christianmcb8
 
----
-
 ## License
 
-This project is licensed under the MIT License.
+MIT License
